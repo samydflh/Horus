@@ -1,0 +1,8 @@
+{% set result = check_sysctl_value("kernel.randomize_va_space", 2, executor=executor, control_name="Ensure kernel.randomize_va_space is configured") %}
+{% do results.append(result) %}
+
+{% set result = check_sysctl_value("fs.protected_hardlinks", 1, executor=executor, control_name="Ensure fs.protected_hardlinks is configured") %}
+{% do results.append(result) %}
+
+{% set result = check_sysctl_value("fs.protected_symlinks", 1, executor=executor, control_name="Ensure fs.protected_symlinks is configured") %}
+{% do results.append(result) %}

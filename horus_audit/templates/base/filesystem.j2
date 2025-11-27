@@ -1,0 +1,17 @@
+{% set result = check_file_exists("/etc/motd", control_name="Ensure /etc/motd exists") %}
+{% do results.append(result) %}
+
+{% set result = check_file_exists("/etc/issue", control_name="Ensure /etc/issue exists") %}
+{% do results.append(result) %}
+
+{% set result = check_file_exists("/etc/issue.net", control_name="Ensure /etc/issue.net exists") %}
+{% do results.append(result) %}
+
+{% set result = check_file_permissions("/etc/passwd", "644", control_name="Ensure /etc/passwd permissions are configured") %}
+{% do results.append(result) %}
+
+{% set result = check_file_permissions("/etc/group", "644", control_name="Ensure /etc/group permissions are configured") %}
+{% do results.append(result) %}
+
+{% set result = check_file_permissions("/etc/shadow", "600", control_name="Ensure /etc/shadow permissions are configured") %}
+{% do results.append(result) %}

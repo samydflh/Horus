@@ -1,0 +1,2 @@
+{% set result = check_service_enabled("sshd", executor=executor, control_name="Ensure OpenSSH is enabled") %}
+{% do results.append(result) %}
