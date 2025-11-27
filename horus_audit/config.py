@@ -15,6 +15,9 @@ class Config:
         # Setup logging
         self._setup_logging()
 
+        # Default template directory: /path/to/project/horus_audit/templates/
+        self.default_template_dir = Path(__file__).resolve().parent / "templates"
+
     def get_logger(self, module_name: str) -> Logger:
         """
         Return a configured logger for a specific module.
