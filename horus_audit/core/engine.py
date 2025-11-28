@@ -86,7 +86,7 @@ def run_local_audit(
             logger.error(f"Rendering error in template {template}: {e}")
             results.append(
                 ControlResult.error_(
-                    id=f"TPL::{template}",
+                    name=f"TPL::{template}",
                     message=f"Template rendering error: {e}",
                     details=str(e)
                 )
