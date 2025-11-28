@@ -1,0 +1,5 @@
+distro==1.9.0
+Jinja2==3.1.6
+pytest==9.0.1
+rich==14.2.0
+typer==0.20.0

@@ -1,0 +1,24 @@
+[project]
+name = "horus"
+version = "0.1.0"
+description = "Linux security auditing tool based on CIS benchmarks."
+requires-python = ">=3.11"
+dependencies = [
+    "distro>=1.9.0",
+    "Jinja2>=3.1.6",
+    "pytest>=9.0.1",
+    "rich>=14.2.0",
+    "typer>=0.20.0"
+]
+
+[project.scripts]
+horus = "horus_audit.cli:app"
+
+[tool.pytest.ini_options]
+addopts = "-v --tb=short --disable-warnings --maxfail=1"
+testpaths = [
+    "tests"
+]
+python_files = [
+    "test_*.py"
+]

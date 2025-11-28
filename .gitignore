@@ -1,0 +1,8 @@
+# Environments
+.env/
+
+# Byte-compiled, DLL files
+__pycache__/
+
+# Distribution, packaging
+*.egg-info/
