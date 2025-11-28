@@ -11,6 +11,9 @@ dependencies = [
     "typer>=0.20.0"
 ]
 
+[project.scripts]
+horus = "horus_audit.cli:app"
+
 [tool.pytest.ini_options]
 addopts = "-v --tb=short --disable-warnings --maxfail=1"
 testpaths = [
