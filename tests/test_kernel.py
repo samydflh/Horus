@@ -7,7 +7,6 @@ from horus_audit.controls.base import (
     check_sysctl_value
 )
 from horus_audit.core.executor import ExecutionResult, LocalExecutor
-from horus_audit.core.result import ControlResult
 
 
 @pytest.mark.kernel
@@ -28,10 +27,9 @@ def test_check_sysctl_value_passed(monkeypatch: MonkeyPatch) -> None:
         control_name="test_sysctl"
     )
 
-    assert isinstance(result, ControlResult)
     assert result.status == "PASSED"
     assert result.name == "test_sysctl"
-    assert "net.ipv4.ip_forward=1" in result.message
+    assert result.message == "net.ipv4.ip_forward=1"
 
 
 @pytest.mark.kernel
@@ -52,10 +50,9 @@ def test_check_sysctl_value_failed(monkeypatch: MonkeyPatch) -> None:
         control_name="test_sysctl"
     )
 
-    assert isinstance(result, ControlResult)
     assert result.status == "FAILED"
     assert result.name == "test_sysctl"
-    assert "net.ipv4.ip_forward=1, expected 0" in result.message
+    assert result.message == "net.ipv4.ip_forward=1, expected 0"
 
 
 @pytest.mark.kernel
@@ -76,10 +73,9 @@ def test_check_sysctl_value_skipped(monkeypatch: MonkeyPatch) -> None:
         control_name="test_sysctl"
     )
 
-    assert isinstance(result, ControlResult)
     assert result.status == "SKIPPED"
     assert result.name == "test_sysctl"
-    assert "Cannot read sysctl net.invalid.key" in result.message
+    assert result.message == "Cannot read sysctl net.invalid.key"
 
 
 @pytest.mark.kernel
