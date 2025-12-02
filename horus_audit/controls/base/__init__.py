@@ -8,7 +8,10 @@ from horus_audit.controls.base.kernel import (
     check_module_loadable,
     check_sysctl_value
 )
-from horus_audit.controls.base.services import check_service_enabled
+from horus_audit.controls.base.services import (
+    check_service_active,
+    check_service_enabled
+)
 
 
 __all__ = [
@@ -17,6 +20,7 @@ __all__ = [
     "check_module_available",
     "check_module_loadable",
     "check_partition",
+    "check_service_active",
     "check_service_enabled",
     "check_sysctl_value"
 ]
