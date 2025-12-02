@@ -9,12 +9,12 @@ from horus_audit.controls.base import (
     check_file_permissions,
     check_partition
 )
-from horus_audit.core.executor import ExecutionResult, Executor
+from horus_audit.core.executor import ExecutionResult, LocalExecutor
 
 
 @pytest.mark.filesystem
 def test_check_partition_passed(monkeypatch: MonkeyPatch) -> None:
-    mock_executor = Executor()
+    mock_executor = LocalExecutor()
 
     def mock_run(command: str) -> ExecutionResult:
         return ExecutionResult(
@@ -40,7 +40,7 @@ def test_check_partition_passed(monkeypatch: MonkeyPatch) -> None:
 
 @pytest.mark.filesystem
 def test_check_partition_failed(monkeypatch: MonkeyPatch) -> None:
-    mock_executor = Executor()
+    mock_executor = LocalExecutor()
 
     def mock_run(command: str) -> ExecutionResult:
         return ExecutionResult(
@@ -66,7 +66,7 @@ def test_check_partition_failed(monkeypatch: MonkeyPatch) -> None:
 
 @pytest.mark.filesystem
 def test_check_partition_warning_fstype(monkeypatch: MonkeyPatch) -> None:
-    mock_executor = Executor()
+    mock_executor = LocalExecutor()
 
     def mock_run(command: str) -> ExecutionResult:
         return ExecutionResult(
@@ -92,7 +92,7 @@ def test_check_partition_warning_fstype(monkeypatch: MonkeyPatch) -> None:
 
 @pytest.mark.filesystem
 def test_check_partition_warning_options(monkeypatch: MonkeyPatch) -> None:
-    mock_executor = Executor()
+    mock_executor = LocalExecutor()
 
     def mock_run(command: str) -> ExecutionResult:
         return ExecutionResult(
@@ -113,7 +113,7 @@ def test_check_partition_warning_options(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "WARNING"
     assert result.name == "test_partition"
-    assert "/tmp does not include options nosuid, noexec" in result.message
+    assert result.message == "/tmp does not include options nosuid, noexec"
 
 
 @pytest.mark.filesystem
@@ -126,7 +126,7 @@ def test_check_file_exists_passed() -> None:
 
         assert result.status == "PASSED"
         assert result.name == "test_file_exists"
-        assert f"{tmp_file} exists" in result.message
+        assert result.message == f"{tmp_file} exists"
 
 
 @pytest.mark.filesystem
@@ -136,7 +136,7 @@ def test_check_file_exists_failed() -> None:
 
     assert result.status == "FAILED"
     assert result.name == "test_file_exists"
-    assert f"{non_existent_file} does not exist" in result.message
+    assert result.message == f"{non_existent_file} does not exist"
 
 
 @pytest.mark.filesystem
@@ -186,7 +186,7 @@ def test_check_file_permissions_warning() -> None:
 
     assert result.status == "WARNING"
     assert result.name == "test_file_permissions"
-    assert f"{non_existent_file} not found" in result.message
+    assert result.message == f"{non_existent_file} not found"
 
 
 @pytest.mark.filesystem
@@ -208,4 +208,4 @@ def test_check_file_permissions_skipped(monkeypatch: MonkeyPatch) -> None:
 
         assert result.status == "SKIPPED"
         assert result.name == "test_file_permissions"
-        assert f"No permission to access {tmp_file}" in result.message
+        assert result.message == f"No permission to access {tmp_file}"
