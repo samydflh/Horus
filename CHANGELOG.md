@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.1] - 2025-12-03
+
+### Added
+
+- **Filesystem controls** - Implemented partitioning control
+- **Kernel controls**
+    - Implemented module availability control
+    - Implemented module loadability control
+- **Service controls** - Implemented service active status control
+
+### Changed
+- **Filesystem controls** - Improved permission control
+- **Service controls** - Improved service enable status control
+- **PoC templates** - Updated PoC templates with additional security controls
+
 ## [0.1.0] - 2025-11-28
 
 ### Added
