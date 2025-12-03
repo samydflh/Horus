@@ -1,2 +1,11 @@
 {% set result = check_service_enabled("sshd", executor=executor, control_name="Ensure OpenSSH is enabled") %}
 {% do results.append(result) %}
+
+{% set result = check_service_active("sshd", executor=executor, control_name="Ensure OpenSSH is active") %}
+{% do results.append(result) %}
+
+{% set result = check_service_enabled("rsync", enabled=False, executor=executor, control_name="Ensure rsync is not enabled") %}
+{% do results.append(result) %}
+
+{% set result = check_service_active("rsync", active=False, executor=executor, control_name="Ensure rsync is not active") %}
+{% do results.append(result) %}

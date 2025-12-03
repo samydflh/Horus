@@ -1,3 +1,9 @@
+{% set result = check_partition("/tmp", ("tmpfs"), ("nodev", "nosuid", "noexec"), executor=executor, control_name="Ensure /tmp is a separate partition") %}
+{% do results.append(result) %}
+
+{% set result = check_partition("/home", ("ext4", "xfs"), ("nodev", "nosuid"), executor=executor, control_name="Ensure /home is a separate partition") %}
+{% do results.append(result) %}
+
 {% set result = check_file_exists("/etc/motd", control_name="Ensure /etc/motd exists") %}
 {% do results.append(result) %}
 
