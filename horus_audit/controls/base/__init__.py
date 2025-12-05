@@ -5,7 +5,6 @@ from horus_audit.controls.base.filesystem import (
 )
 from horus_audit.controls.base.kernel import (
     check_module_available,
-    check_module_loadable,
     check_sysctl_value
 )
 from horus_audit.controls.base.services import (
@@ -18,7 +17,6 @@ __all__ = [
     "check_file_exists",
     "check_file_permissions",
     "check_module_available",
-    "check_module_loadable",
     "check_partition",
     "check_service_active",
     "check_service_enabled",
