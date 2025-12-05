@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2] - 2025-12-05
+
+### Changed
+- **Kernel controls** - Updated module availability controls based on CIS recommendations
+- **Service controls** - Updated service status controls based on CIS recommendations
+- **CLI interface** - Improved command-line interface with better usability
+
 ## [0.1.1] - 2025-12-03
 
 ### Added
