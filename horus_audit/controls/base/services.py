@@ -17,38 +17,35 @@ def check_service_enabled(
     Returned status:
     - If `enabled` is True:
         - `PASSED` if the service is enabled.
-        - `FAILED` otherwise.
+        - `FAILED` if the service is disabled.
     - If `enabled` is False:
         - `PASSED` if the service is disabled.
-        - `FAILED` otherwise.
+        - `FAILED` if the service is enabled.
     """
 
-    result = executor.run(f"systemctl is-enabled {service}")
+    result = executor.run(f"systemctl is-enabled {service} 2>/dev/null | grep 'enabled'")
 
     if enabled:
-        if result.code == 0 and result.stdout.strip() in {
-            "enabled",
-            "enabled-runtime",
-            "alias"
-        }:
-            return ControlResult.passed_(control_name, f"{service} enabled")
+        if result.code == 0 and result.stdout.strip():
+            return ControlResult.passed_(
+                control_name,
+                f"{service} enabled"
+            )
 
         return ControlResult.failed_(
             control_name,
-            f"{service} not enabled"
+            f"{service} disabled"
         )
     else:
-        if result.stdout.strip() in {
-            "disabled",
-            "masked",
-            "static",
-            "indirect"
-        }:
-            return ControlResult.passed_(control_name, f"{service} disabled")
+        if not result.stdout.strip():
+            return ControlResult.passed_(
+                control_name,
+                f"{service} disabled"
+            )
 
         return ControlResult.failed_(
             control_name,
-            f"{service} not disabled"
+            f"{service} enabled"
         )
 
 
@@ -72,28 +69,25 @@ def check_service_active(
         - `FAILED` otherwise.
     """
 
-    result = executor.run(f"systemctl is-active {service}")
+    result = executor.run(f"systemctl is-active {service} 2>/dev/null | grep '^active'")
 
     if active:
-        if result.code == 0 and result.stdout.strip() in {
-            "active",
-            "active (running)",
-            "active (exited)",
-            "active (listening)"
-        }:
-            return ControlResult.passed_(control_name, f"{service} active")
+        if result.code == 0 and result.stdout.strip():
+            return ControlResult.passed_(
+                control_name,
+                f"{service} active"
+            )
 
         return ControlResult.failed_(
             control_name,
-            f"{service} not active"
+            f"{service} inactive"
         )
     else:
-        if result.stdout.strip() in {
-            "inactive",
-            "inactive (dead)",
-            "failed"
-        }:
-            return ControlResult.passed_(control_name, f"{service} not active")
+        if not result.stdout.strip():
+            return ControlResult.passed_(
+                control_name,
+                f"{service} inactive"
+            )
 
         return ControlResult.failed_(
             control_name,
