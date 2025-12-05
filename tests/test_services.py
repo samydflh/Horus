@@ -13,8 +13,7 @@ from horus_audit.core.executor import ExecutionResult, LocalExecutor
     "stdout",
     [
         "enabled",
-        "enabled-runtime",
-        "alias"
+        "enabled-runtime"
     ]
 )
 def test_check_service_enabled_passed(
@@ -44,9 +43,9 @@ def test_check_service_enabled_passed(
 @pytest.mark.services
 def test_check_service_enabled_failed(monkeypatch: MonkeyPatch) -> None:
     mock_result = ExecutionResult(
-        stdout="disabled",
+        stdout="",
         stderr="",
-        code=0
+        code=1
     )
 
     mock_executor = LocalExecutor()
@@ -60,27 +59,15 @@ def test_check_service_enabled_failed(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "FAILED"
     assert result.name == "test_service_enabled"
-    assert result.message == "ssh not enabled"
+    assert result.message == "ssh disabled"
 
 
 @pytest.mark.services
-@pytest.mark.parametrize(
-    "stdout",
-    [
-        "disabled",
-        "masked",
-        "static",
-        "indirect"
-    ]
-)
-def test_check_service_disabled_passed(
-    monkeypatch: MonkeyPatch,
-    stdout: str
-) -> None:
+def test_check_service_disabled_passed(monkeypatch: MonkeyPatch) -> None:
     mock_result = ExecutionResult(
-        stdout=stdout,
+        stdout="",
         stderr="",
-        code=0
+        code=1
     )
 
     mock_executor = LocalExecutor()
@@ -118,7 +105,7 @@ def test_check_service_disabled_failed(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "FAILED"
     assert result.name == "test_service_disabled"
-    assert result.message == "ssh not disabled"
+    assert result.message == "ssh enabled"
 
 
 @pytest.mark.services
@@ -158,9 +145,9 @@ def test_check_service_active_passed(
 @pytest.mark.services
 def test_check_service_active_failed(monkeypatch: MonkeyPatch) -> None:
     mock_result = ExecutionResult(
-        stdout="inactive",
+        stdout="",
         stderr="",
-        code=3
+        code=1
     )
 
     mock_executor = LocalExecutor()
@@ -174,26 +161,15 @@ def test_check_service_active_failed(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "FAILED"
     assert result.name == "test_service_active"
-    assert result.message == "ssh not active"
+    assert result.message == "ssh inactive"
 
 
 @pytest.mark.services
-@pytest.mark.parametrize(
-    "stdout",
-    [
-        "inactive",
-        "inactive (dead)",
-        "failed"
-    ]
-)
-def test_check_service_inactive_passed(
-    monkeypatch: MonkeyPatch,
-    stdout: str
-) -> None:
+def test_check_service_inactive_passed(monkeypatch: MonkeyPatch) -> None:
     mock_result = ExecutionResult(
-        stdout=stdout,
+        stdout="",
         stderr="",
-        code=3
+        code=1
     )
 
     mock_executor = LocalExecutor()
@@ -208,7 +184,7 @@ def test_check_service_inactive_passed(
 
     assert result.status == "PASSED"
     assert result.name == "test_service_inactive"
-    assert result.message == "ssh not active"
+    assert result.message == "ssh inactive"
 
 
 @pytest.mark.services

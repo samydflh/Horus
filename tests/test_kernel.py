@@ -3,7 +3,6 @@ from pytest import MonkeyPatch
 
 from horus_audit.controls.base import (
     check_module_available,
-    check_module_loadable,
     check_sysctl_value
 )
 from horus_audit.core.executor import ExecutionResult, LocalExecutor
@@ -80,14 +79,12 @@ def test_check_sysctl_value_skipped(monkeypatch: MonkeyPatch) -> None:
 
 @pytest.mark.kernel
 def test_check_module_available_passed(monkeypatch: MonkeyPatch) -> None:
-    mock_result = ExecutionResult(
-        stdout="",
-        stderr="Module cramfs not found",
-        code=1
-    )
-
     mock_executor = LocalExecutor()
-    monkeypatch.setattr(mock_executor, "run", lambda cmd: mock_result)
+
+    monkeypatch.setattr(
+        "horus_audit.controls.base.kernel._check_module_exists",
+        lambda module, executor: False
+    )
 
     result = check_module_available(
         "cramfs",
@@ -97,19 +94,25 @@ def test_check_module_available_passed(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "PASSED"
     assert result.name == "test_module_available"
-    assert result.message == "cramfs module is not available"
+    assert result.message == "cramfs module does not exist"
 
 
 @pytest.mark.kernel
 def test_check_module_available_failed(monkeypatch: MonkeyPatch) -> None:
-    mock_result = ExecutionResult(
-        stdout="",
-        stderr="",
-        code=0
-    )
-
     mock_executor = LocalExecutor()
-    monkeypatch.setattr(mock_executor, "run", lambda cmd: mock_result)
+
+    monkeypatch.setattr(
+        "horus_audit.controls.base.kernel._check_module_exists",
+        lambda module, executor: True
+    )
+    monkeypatch.setattr(
+        "horus_audit.controls.base.kernel._check_module_loaded",
+        lambda module, executor: False
+    )
+    monkeypatch.setattr(
+        "horus_audit.controls.base.kernel._check_module_disabled",
+        lambda module, executor: False
+    )
 
     result = check_module_available(
         "cramfs",
@@ -119,48 +122,4 @@ def test_check_module_available_failed(monkeypatch: MonkeyPatch) -> None:
 
     assert result.status == "FAILED"
     assert result.name == "test_module_available"
-    assert result.message == "cramfs module is available"
-
-
-@pytest.mark.kernel
-def test_check_module_loadable_passed(monkeypatch: MonkeyPatch) -> None:
-    mock_result = ExecutionResult(
-        stdout="",
-        stderr="",
-        code=0
-    )
-
-    mock_executor = LocalExecutor()
-    monkeypatch.setattr(mock_executor, "run", lambda cmd: mock_result)
-
-    result = check_module_loadable(
-        "cramfs",
-        executor=mock_executor,
-        control_name="test_module_loadable"
-    )
-
-    assert result.status == "PASSED"
-    assert result.name == "test_module_loadable"
-    assert result.message == "cramfs module is unloadable"
-
-
-@pytest.mark.kernel
-def test_check_module_loadable_failed(monkeypatch: MonkeyPatch) -> None:
-    mock_result = ExecutionResult(
-        stdout="/lib/modules/6.8.0-31-generic/kernel/fs/cramfs.ko\n",
-        stderr="",
-        code=0
-    )
-
-    mock_executor = LocalExecutor()
-    monkeypatch.setattr(mock_executor, "run", lambda cmd: mock_result)
-
-    result = check_module_loadable(
-        "cramfs",
-        executor=mock_executor,
-        control_name="test_module_loadable"
-    )
-
-    assert result.status == "FAILED"
-    assert result.name == "test_module_loadable"
-    assert "cramfs module is loadable" in result.message
+    assert result.message == "cramfs module exists, not disabled"

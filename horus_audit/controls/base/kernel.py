@@ -57,33 +57,33 @@ def check_module_available(
     - `FAILED` otherwise.
     """
 
-    result = executor.run(f"modprobe -n {module}")
+    if not _check_module_exists(module, executor):
+        return ControlResult.passed_(
+            control_name,
+            f"{module} module does not exist"
+        )
 
-    if result.code == 0:
+    if _check_module_loaded(module, executor):
         return ControlResult.failed_(
             control_name,
-            f"{module} module is available"
+            f"{module} module is loaded"
+        )
+
+    if not _check_module_disabled(module, executor):
+        return ControlResult.failed_(
+            control_name,
+            f"{module} module exists, not disabled"
         )
 
     return ControlResult.passed_(
         control_name,
-        f"{module} module is not available"
+        f"{module} module exists, not loaded, disabled"
     )
 
 
-@register_control("check_module_loadable")
-def check_module_loadable(
-    module: str,
-    *,
-    executor: Executor,
-    control_name: str
-) -> ControlResult:
+def _check_module_exists(module: str, executor: Executor) -> bool:
     """
-    Check whether a module is unloadable.
-
-    Returned status:
-    - `PASSED` if the module is unloadable.
-    - `FAILED` otherwise.
+    Check whether the module exists.
     """
 
     result = executor.run(
@@ -91,13 +91,45 @@ def check_module_loadable(
         f"-type f -name '{module}*'"
     )
 
-    if result.stdout:
-        return ControlResult.failed_(
-            control_name,
-            f"{module} module is loadable"
-        )
+    return bool(result.stdout.strip())
 
-    return ControlResult.passed_(
-        control_name,
-        f"{module} module is unloadable"
-    )
+
+def _check_module_loaded(module: str, executor: Executor) -> bool:
+    """
+    Check whether the module is loaded.
+    """
+
+    result = executor.run("lsmod")
+
+    if result.code != 0:
+        return False
+
+    for line in result.stdout.splitlines():
+        if line.startswith(module + " "):
+            return True
+
+    return False
+
+
+def _check_module_disabled(module: str, executor: Executor) -> bool:
+    """
+    Check whether the module is disabled.
+    """
+
+    result = executor.run("grep -RHi '' /etc/modprobe.d/ 2>/dev/null")
+
+    if result.code != 0:
+        return False
+
+    disabled = False
+
+    for line in result.stdout.splitlines():
+        line = line.lower()
+
+        if f"blacklist {module}" in line:
+            disabled = True
+
+        if f"install {module}" in line and ("/bin/true" in line or "/bin/false" in line):
+            disabled = True
+
+    return disabled
