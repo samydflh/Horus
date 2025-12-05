@@ -33,6 +33,13 @@ def audit(
         help="Write the report to a JSON file.",
         metavar="JSON_FILE"
     ),
+    verbose: bool = typer.Option(
+        False,
+        "-v",
+        "--verbose",
+        help="Show details.",
+        is_eager=True
+    ),
     help: bool = typer.Option(
         False,
         "--help",
@@ -56,7 +63,7 @@ def audit(
 
         report = run_local_audit(os_info=os_info)
 
-        _print_results(report.results)
+        _print_results(report.results, verbose=verbose)
         _print_summary(report.summary)
 
         console.print()
@@ -107,13 +114,14 @@ def _print_header(os_info: OSInfo) -> None:
             title_align="left",
             box=box.ROUNDED,
             border_style="cyan",
-            padding=(1, 2)
+            padding=(1, 2),
+            expand=False
         )
     )
     console.print()
 
 
-def _print_results(results: list[ControlResult]) -> None:
+def _print_results(results: list[ControlResult], verbose: bool = False) -> None:
     if not results:
         console.print(
             Panel(
@@ -122,7 +130,8 @@ def _print_results(results: list[ControlResult]) -> None:
                 title_align="left",
                 box=box.ROUNDED,
                 border_style="cyan",
-                padding=(1, 2)
+                padding=(1, 2),
+                expand=False
             )
         )
         console.print()
@@ -137,12 +146,15 @@ def _print_results(results: list[ControlResult]) -> None:
         padding = " " * (max_length - len(result.name) + 30)
 
         line = Text()
-        line.append(f" {result.name}{padding}", style="bold cyan")
+        line.append(f"{result.name}{padding}", style="bold cyan")
         line.append(_format_status(result.status))
 
-        if result.message:
-            line.append("\n")
-            line.append(f"  {result.message}", style="dim white")
+        if verbose:
+            if result.message:
+                line.append("\n")
+                line.append(f"{result.message}", style="dim white")
+
+        line.append("\n") if result != results[-1] else None
 
         renderables.append(line)
 
@@ -153,7 +165,8 @@ def _print_results(results: list[ControlResult]) -> None:
             title_align="left",
             box=box.ROUNDED,
             border_style="cyan",
-            padding=(1, 2)
+            padding=(1, 2),
+            expand=False
         )
     )
     console.print()
@@ -180,7 +193,8 @@ def _print_summary(summary: Summary) -> None:
             title_align="left",
             box=box.ROUNDED,
             border_style="cyan",
-            padding=(1, 2)
+            padding=(1, 2),
+            expand=False
         )
     )
 
