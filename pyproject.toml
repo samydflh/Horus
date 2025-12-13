@@ -1,0 +1,17 @@
+[project]
+name = "horus"
+version = "0.1.0"
+description = "Linux security auditing tool."
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=9.0.2"
+]
+
+[tool.pytest.ini_options]
+addopts = "-v --tb=short --disable-warnings --maxfail=1"
+testpaths = [
+    "tests"
+]
+python_files = [
+    "test_*.py"
+]
