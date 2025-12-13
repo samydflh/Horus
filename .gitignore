@@ -1,0 +1,8 @@
+# Environments
+.env/
+
+# Byte-compiled files
+__pycache__/
+
+# Packaging
+*.egg-info/
