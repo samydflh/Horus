@@ -54,20 +54,20 @@ def _parse_rule(i: int, rule: dict[str, Any]) -> Rule:
         raise PolicyError(f"rules[{i}] has to be a mapping")
 
     rule_id = rule.get("rule_id")
-    title = rule.get("title")
+    control = rule.get("control")
     params = rule.get("params", {})
 
     if not isinstance(rule_id, str) or not rule_id:
         raise PolicyError(f"No rules[{i}].rule_id")
 
-    if not isinstance(title, str) or not title:
-        raise PolicyError(f"No rules[{i}].title")
+    if not isinstance(control, str) or not control:
+        raise PolicyError(f"No rules[{i}].control")
 
     if not isinstance(params, dict):
         raise PolicyError(f"rules[{i}].params has to be a mapping")
 
     return Rule(
         rule_id=rule_id,
-        title=title,
+        control=control,
         params=params
     )

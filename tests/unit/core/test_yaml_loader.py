@@ -14,7 +14,7 @@ category: Filesystem
 
 rules:
   - rule_id: filesystem.partition
-    title: Ensure /tmp is separate
+    control: Ensure /tmp is separate
     params:
       partition: /tmp
       fstype: tmpfs
@@ -34,6 +34,7 @@ rules:
 
     rule = policy.rules[0]
     assert rule.rule_id == "filesystem.partition"
+    assert rule.control == "Ensure /tmp is separate"
     assert rule.params["partition"] == "/tmp"
     assert rule.params["fstype"] == "tmpfs"
     assert rule.params["options"] == "nosuid,nodev,noexec"
