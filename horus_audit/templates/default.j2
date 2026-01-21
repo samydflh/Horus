@@ -1,0 +1,24 @@
+Horus Security Audit Report
+===========================
+
+Policy:
+  Category: {{ report.category }}
+
+Generated at: {{ report.generated_at }}
+
+{% if report.os_info %}
+System:
+  Hostname: {{ report.os_info.hostname }}
+  Distribution: {{ report.os_info.name }} {{ report.os_info.version }}
+  Kernel: {{ report.os_info.kernel }}
+{% endif %}
+
+Summary:
+{% for status, count in report.summary.items() %}
+  {{ status }}: {{ count }}
+{% endfor %}
+
+Results:
+{% for result in report.results %}
+  {{ result.control }}: {{ result.status }}
+{% endfor %}
